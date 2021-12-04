@@ -9,18 +9,15 @@ const sequelize = new Sequelize(
   process.env.NODE_ENV === "production" ? proConfig : devConfig,
   {
     dialect: 'postgres',
-    ssl: true,
+    ssl: false,
     protocol: "postgres",
 
     logging: true,
     dialectOptions: {
         ssl: {
-            require: true,
-            rejectUnauthorized: false // <<<<<< YOU NEED THIS
+            require: false
         }
     },
-    logging: false, // set to console.log to see the raw SQL queries
-    native: false, // lets Sequelize know we can use pg-native for ~30% more speed
   }
 );
 const basename = path.basename(__filename);
@@ -101,6 +98,7 @@ module.exports = {
 
 
 const { Client } = require('pg');
+const { off } = require("process");
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,

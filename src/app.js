@@ -7,7 +7,7 @@ const { join } = require("path");
 require("./db.js");
 
 const server = express();
-//server.listen(process.env.PORT||3001)
+server.set("port",process.env.PORT||3001)
 server.name = "API";
 server.use(cors());
 server.use(express.static(join(__dirname, "./uploads")));

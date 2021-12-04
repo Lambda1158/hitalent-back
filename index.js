@@ -13,7 +13,7 @@ const {
 
 // Syncing all the models at once.
 conn.sync({ force: true }).then(() => {
-  server.listen(process.env.PORT||3001, async () => {
+  server.listen(server.get("port"), async () => {
     Categories.bulkCreate([
       { title: "Tecnologias" },
       { title: "Arte" },

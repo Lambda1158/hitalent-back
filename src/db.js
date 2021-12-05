@@ -2,24 +2,24 @@ require("dotenv").config();
 const { Sequelize } = require("sequelize");
 const fs = require("fs");
 const path = require("path");
+
+
 const { DB_USER, DB_PASSWORD, DB_HOST,PG_DATABASE } = process.env;
 const proConfig = process.env.DATABASE_URL; 
 const devConfig=`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${PG_DATABASE}`
-const sequelize = new Sequelize(
-  process.env.NODE_ENV === "production" ? proConfig : devConfig,
-  {
-    dialect: 'postgres',
-    ssl: false,
-    protocol: "postgres",
 
-    logging: true,
-    dialectOptions: {
-        ssl: {
-            require: false
-        }
-    },
-  }
-);
+
+
+
+const sequelize = new Sequelize(process.env.NODE_ENV === "production" ? proConfig : devConfig,{
+    dialect: 'postgres',
+    protocol: 'postgres',
+    dialectOptions: {},
+    logging: false, // set to console.log to see the raw SQL queries
+    native: false, // lets Sequelize know we can use pg-native for ~30% more speed
+  });
+
+
 const basename = path.basename(__filename);
 
 const modelDefiners = [];
@@ -97,22 +97,3 @@ module.exports = {
 
 
 
-const { Client } = require('pg');
-const { off } = require("process");
-
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
-
-client.connect();
-
-client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-  if (err) throw err;
-  for (let row of res.rows) {
-    console.log(JSON.stringify(row));
-  }
-  client.end();
-});

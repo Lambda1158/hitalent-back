@@ -1,4 +1,5 @@
 const server = require("./src/app.js");
+const PORT=process.env.PORT||3001
 const {
   conn,
   Users,
@@ -14,7 +15,7 @@ const bcrypt = require("bcrypt");
 
 // Syncing all the models at once.
 conn.sync({ force: true }).then(() => {
-  server.listen(3001, async () => {
+  server.listen(PORT, async () => {
     Categories.bulkCreate([
       { title: "Programación y Tecnologias" },
       { title: "Arte" },

@@ -5,7 +5,7 @@ const routes = require("./routes/index.js");
 const cors = require("cors");
 const { join } = require("path");
 require("./db.js");
-
+const PORT=process.env.PORT||3001
 const server = express();
 
 server.name = "API";

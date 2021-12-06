@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "mocha -w ./tests/**/*.spec.js"
+      "start": "node index.js",
+      "heroku-postbuild": "npm run client-install && npm run client-build",
+      "client-install": "cd client && npm install",
+      "client-build": "cd client && npm run build",
+      "test": "mocha -w ./tests/**/*.spec.js"
   },
   "author": "Henry",
   "license": "ISC",

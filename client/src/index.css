@@ -1,0 +1,37 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+.btn-custom {
+    @apply flex justify-center items-center h-8 w-40 px-4 py-2 text-sm rounded-full shadow-sm font-medium transition duration-300 ease-in-out
+}
+
+.btn-primary {
+    @apply flex justify-center items-center h-8 w-28 px-4 py-2 text-sm rounded-full shadow-sm font-medium transition duration-300 ease-in-out
+}
+
+.btn-secondary {
+    @apply flex justify-center items-center h-10 w-44 px-4 py-2 text-lg rounded-full shadow-sm font-medium transition duration-300 ease-in-out
+}
+
+.btn-tertiary {
+    @apply flex justify-center items-center h-14 w-48 px-4 py-2 mt-4 text-lg rounded-full shadow-sm font-medium transition duration-300 ease-in-out
+}
+
+.btn-quaternary{
+    @apply flex justify-center items-center h-8 w-20 px-4 py-2 text-sm rounded-full shadow-sm font-medium transition duration-300 ease-in-out
+}
+
+.btn-colors {
+    @apply bg-dark text-white hover:bg-semidark
+}
+
+.btn-social {
+    @apply flex items-center text-sm font-medium
+}
+
+.btn-payment {
+    @apply flex items-center w-5
+}

@@ -1,6 +1,7 @@
 const { Users, Question, Posts } = require("../db");
 
 async function question(req, res, next) {
+  console.log("probando ruta", body);
   let { title, question, user_id, post_id } = req.body;
   try {
     let newQuestion = await Question.create({
@@ -94,7 +95,7 @@ async function getPostQuestions(req, res, next) {
           {
             model: Question,
             attributes: ["title", "question", "answer"],
-            order: [["createdAt", "DESC"]]
+            order: [["createdAt", "DESC"]],
           },
         ],
       });

@@ -15,17 +15,27 @@ module.exports = (sequelize) => {
         //     type: DataTypes.UUID,
         //     allowNull: false,
         // },
-        rating: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                min: 1,
-                max: 5
-            }
-        },
+        // rating: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: false,
+        //     validate: {
+        //         min: 1,
+        //         max: 5
+        //     }
+        // },
+        qualification: {
+            type: DataTypes.ENUM('1', '2', '3', '4', '5'),
+            allowNull: true
+        },    
         description: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
     });
 };
+
+
+
+
+
+

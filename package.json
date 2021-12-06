@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -w ./tests/**/*.spec.js",
-    "start": "node index.js",
-    "start:dev": "nodemon index.js"
+    "start": "nodemon -L",
+    "test": "mocha -w ./tests/**/*.spec.js"
   },
   "author": "Henry",
   "license": "ISC",
@@ -24,12 +23,12 @@
     "express": "^4.17.1",
     "ioredis": "^4.19.2",
     "jsonwebtoken": "^8.5.1",
+    "mercadopago": "^1.5.9",
     "morgan": "^1.10.0",
     "multer": "^1.4.3",
     "nodemailer": "^6.7.2",
     "pg": "^8.5.1",
-    "sequelize": "^6.3.5",
-    "nodemon": "1.17.3" 
+    "sequelize": "^6.3.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",

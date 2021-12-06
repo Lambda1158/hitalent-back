@@ -1,7 +1,14 @@
 const {Orders,Users,Posts,Payments}=require("../db")
 
 const getAllOrden=async(req,res,next)=>{
-    let allOrden=await Orders.findAll({include:[{model:Users},{model:Posts},{model:Payments}]})
+    let allOrden=await Orders.findAll({
+        include:[
+            {model:Users,
+            order: [['createdAt', 'DESC']]},
+            {model:Posts,
+            order: [['createdAt', 'DESC']]},
+            {model:Payments}
+        ]})
     if(!allOrden) return res.json({message:"no hay ordenes"})
     res.json(allOrden)
 }
@@ -11,8 +18,12 @@ const getOrdenbyId= async(req,res,next)=>{
     var order=await Orders.findAll({
         where:{id},
         include: [
-            {model: Users},
-            {model:Posts},
+            {model: Users,
+            order: [['createdAt', 'DESC']]
+        },
+            {model:Posts,
+             order: [['createdAt', 'DESC']]    
+            },
             {model:Payments}
         ]
     })
@@ -62,10 +73,19 @@ const cancelOrden= async(req,res,next)=>{
    
 }
 
+async function getVentas(req,res,next){
+    let user=req.params.id
+    var ventas=await Orders.findAll({include:[{model:Posts},{model:Users}]})
+    let userVentas=ventas.filter(e=>e.post.user_id===user)
+    if(userVentas<1)return res.json({message:"el usuario seleccionado no tiene ventas"})
+    res.json(userVentas)
+}
+
 module.exports={
     getOrdenbyId,
     createOrden,
     editOrden,
     cancelOrden,
-    getAllOrden
+    getAllOrden,
+    getVentas
 }

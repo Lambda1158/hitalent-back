@@ -1,16 +1,30 @@
 const { Review, Users, Posts } = require("../db");
 
 async function createReview(req, res, next) {
-  let { rating, description, user_id, post_id } = req.body;
+  let { qualification, description, user_id, post_id } = req.body;
   try {
     let newReview = await Review.create({
       rating,
       description,
+      qualification
     });
     let userId = Users.findByPk(user_id);
     let postId = Posts.findByPk(post_id);
     newReview.setUser(userId);
     newReview.setPost(postId);
+    let totalQual= await Review.findAll();
+    let posibleQuali= totalQual.length;
+    let count= 0;
+    totalQual.forEach(e => {
+        count += Number(e.qualification)
+    });
+    let result= count / posibleQuali
+    result= result.toString()
+    if(result.length > 4) result= result.slice(0,3)
+    result= Number(result)
+    await Posts.update({
+      rating: result
+    })
     res.json(newReview);
   } catch (err) {
     next(err);
@@ -33,10 +47,10 @@ async function deleteReview(req, res) {
 
 async function updateReview(req, res, next) {
   let { idReview } = req.params;
-  let { rating, description } = req.body;
+  let { qualification, description } = req.body;
   try {
     let review = await Review.findByPk(idReview);
-    if (rating) review.rating = rating;
+    if (qualification) review.qualification = qualification;
     if (description) review.description = description;
     review.save();
     res.json(review);
@@ -44,7 +58,6 @@ async function updateReview(req, res, next) {
     next(err);
   }
 }
-
 
 async function getAllReviewsUser(req, res, next) {
   let { idUser } = req.params;
@@ -58,16 +71,12 @@ async function getAllReviewsUser(req, res, next) {
         {
           model: Posts,
           attributes: ["id", "title"],
-          order: [
-            ["createdAt", "DESC"]
-          ],
+          order: [["createdAt", "DESC"]],
           include: [
             {
               model: Review,
-              attributes: ["rating", "description"],
-              order: [
-                ["createdAt", "DESC"]
-              ],
+              attributes: ["qualification", "description"],
+              order: [["createdAt", "DESC"]],
               include: [
                 {
                   model: Users,
@@ -99,8 +108,8 @@ async function getPostReview(req, res, next) {
         include: [
           {
             model: Review,
-            attributes: ["rating", "description"],
-            order: [['createdAt', 'DESC']],
+            attributes: ["qualification", "description"],
+            order: [["createdAt", "DESC"]],
             include: [
               {
                 model: Users,
@@ -130,10 +139,12 @@ async function getPostReview(req, res, next) {
   }
 }
 
+
+
 module.exports = {
   createReview,
   deleteReview,
   updateReview,
   getAllReviewsUser,
-  getPostReview,
+  getPostReview
 };

@@ -2,7 +2,15 @@ const {Users,Posts,Favorites}=require("../db")
 
 const getFavorites= async(req,res,next)=>{
     let username=req.params.username
-    var favorites=await Favorites.findAll({include:[{model:Users},{model:Posts}]})
+    var favorites=await Favorites.findAll({
+        include:[{
+            model:Users,
+            order: [['createdAt', 'DESC']]
+        },
+        {model:Posts,
+        order: [['createdAt', 'DESC']]
+        }
+    ]})
     if(!favorites)return res.status(400).json({message:"favorios vacio"})
     let array= favorites.filter(e=>e.user.username===username)
     if(array.length<1)return res.status(400).json({message:"no se encontro favoritos"})

@@ -132,7 +132,7 @@ async function getPostId(req, res, next){
                   where: {
                       id: id
                   },
-                  attributes: ['title', 'description', 'image', 'duration', 'oferta', 'cost', 'rating'],
+                  attributes: ['title', 'description', 'image', 'duration', 'oferta', 'cost', 'rating',"id"],
                   include: [{
                       model: Users,
                       attributes: ['id', 'username', 'score', 'country', 'image'],

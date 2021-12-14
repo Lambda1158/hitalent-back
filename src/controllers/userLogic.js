@@ -138,7 +138,7 @@ const confirm = async (req, res) => {
 
 async function getUser(req, res, next) {
   var all = await Users.findAll({
-    order: [['username', 'ASC']]
+    order: [["username", "ASC"]],
   });
   res.json(all);
 }
@@ -240,6 +240,7 @@ async function emailResetPassword(req, res, next) {
 }
 const editPassword = async (req, res, next) => {
   let { email, password } = req.body;
+  console.log(email, password);
   try {
     let user = await Users.findOne({ where: { email: email } });
     let passwordHash = await bcrypt.hash(password, 10);
@@ -268,6 +269,18 @@ async function getUserById(req, res, next) {
           {
             model: Orders,
             order: [["createdAt", "DESC"]],
+            include: [
+              {
+                model: Posts,
+                attributes: ["id", "title"],
+                include: [
+                  {
+                    model: Users,
+                    attributes: ["id", "username"],
+                  },
+                ],
+              },
+            ],
           },
           {
             model: Posts,
@@ -286,7 +299,7 @@ async function getUserById(req, res, next) {
               {
                 model: Posts,
                 attributes: ["id", "title"],
-                order: [["createdAt", "DESC"]]
+                order: [["createdAt", "DESC"]],
               },
             ],
           },

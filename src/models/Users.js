@@ -65,5 +65,10 @@ module.exports = (sequelize) => {
     code: {
       type: DataTypes.STRING, //para confirmar email
     },
+    aprobado:{
+      type:DataTypes.BOOLEAN,
+      defaultValue:false,
+      allowNull:true
+    }
   });
 };

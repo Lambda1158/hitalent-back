@@ -6,8 +6,8 @@ const { getOrdenbyId, editOrden, cancelOrden, createOrden, getAllOrden, getVenta
 router.get("/",getAllOrden)
 router.get("/:id",getOrdenbyId)
 router.post("/",createOrden)
-router.put("/:id",editOrden)
-router.delete("/:id",cancelOrden)
-router.get("/ventas",getVentas)
+router.put("/",editOrden)
+router.delete("/",cancelOrden)
+router.get("/ventas/:id",getVentas)
 
 module.exports = router;

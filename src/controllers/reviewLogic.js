@@ -1,31 +1,51 @@
-const { Review, Users, Posts } = require("../db");
+const { Review, Users, Posts,Orders } = require("../db");
 
 async function createReview(req, res, next) {
   let { qualification, description, user_id, post_id } = req.body;
+
+  let order=await Orders.findAll({where:{
+      userId:user_id,
+      postId:post_id
+  }})
+  if(order.length<1)return res.status(500).json({message:"no puedes hacer una review de una publicacion q no has comprado"})
+
   try {
     let newReview = await Review.create({
-      rating,
       description,
       qualification
     });
-    let userId = Users.findByPk(user_id);
-    let postId = Posts.findByPk(post_id);
-    newReview.setUser(userId);
-    newReview.setPost(postId);
-    let totalQual= await Review.findAll();
-    let posibleQuali= totalQual.length;
-    let count= 0;
-    totalQual.forEach(e => {
-        count += Number(e.qualification)
-    });
-    let result= count / posibleQuali
-    result= result.toString()
-    if(result.length > 4) result= result.slice(0,3)
-    result= Number(result)
-    await Posts.update({
-      rating: result
-    })
-    res.json(newReview);
+
+    let user =await Users.findByPk(user_id);
+    if (!userId.aprobado)return res.json({message:"usuario no aprobado"})
+
+    let post =await  Posts.findByPk(post_id);
+    await newReview.setUser(user);
+    await newReview.setPost(post);
+
+
+    if(post.rating===0){
+        post.rating=Number(review.qualification)
+        await post.save()
+        return res.json(newReview)
+    }
+    post.rating=Number(Math.round((post.rating+Number(qualification))/2))
+    await post.save()
+    res.json(newReview)
+
+    // let totalQual= await Review.findAll();
+    // let posibleQuali= totalQual.length;
+    // let count= 0;
+    // totalQual.forEach(e => {
+    //     count += Number(e.qualification)
+    // });
+    // let result= count / posibleQuali
+    // result= result.toString()
+    // if(result.length > 4) result= result.slice(0,3)
+    // result= Number(result)
+    // await Posts.update({
+    //   rating: result
+    // })
+    // res.json(newReview);
   } catch (err) {
     next(err);
   }

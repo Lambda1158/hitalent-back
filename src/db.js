@@ -68,6 +68,8 @@ const {
   Favorites,
   Payments,
   Question,
+  Conversation,
+  Message,
 } = sequelize.models;
 
 // Aca vendrian las relaciones
@@ -101,6 +103,9 @@ Users.hasMany(Question);
 Question.belongsTo(Users);
 Posts.hasMany(Question);
 Question.belongsTo(Posts);
+
+Conversation.hasMany(Message, { foreignKey: "conversation_id" });
+Message.belongsTo(Conversation, { foreignKey: "conversation_id" });
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');

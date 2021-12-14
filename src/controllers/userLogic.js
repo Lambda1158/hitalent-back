@@ -208,7 +208,7 @@ const editUser = async (req, res, next) => {
   let { username } = req.body;
   try {
     var user = await Users.findOne({ where: { username } });
-    let path = "http://localhost:3001/" + file.filename;
+    let path = "https://hitalent-project.herokuapp.com/" + file.filename;
     user.image = path;
     await user.save();
     res.send(user.toJSON());

@@ -7,7 +7,7 @@ const filename =(req,file,next)=>{
 }
 
 const destination =(req,res,next)=>{
-    next(null,`${__dirname}/uploads`)
+    next(null,`/app/src/uploads`)
     
 }
 

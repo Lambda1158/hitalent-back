@@ -54,6 +54,17 @@ conn.sync({ force: true }).then(() => {
     //------------------------------------USUARIOS------------------------------------------
 
     var usuarioPrueba = await Users.create({
+      name: "Admin",
+      lastName: "Hitalent",
+      username: "admin",
+      password: passwordHash,
+      aprobado: true,
+      email: "admin@gmail.com",
+      email_verified: true,
+      isAdmin: true,
+    });
+
+    var usuarioPrueba = await Users.create({
       name: "Bruno",
       lastName: "Herrera",
       username: "bruno_herrera",

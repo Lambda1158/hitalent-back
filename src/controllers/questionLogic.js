@@ -18,8 +18,8 @@ async function question(req, res, next) {
   }
 }
 async function answer(req, res, next) {
-  let { answer } = req.body;
-  let { idQuestion } = req.params;
+  let { answer, idQuestion } = req.body;
+  console.log("probando puuuuuuuut", req.body);
   try {
     let newAnswer = await Question.findByPk(idQuestion);
     newAnswer.answer = answer;

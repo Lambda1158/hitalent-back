@@ -51,11 +51,11 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT, // ojo aca ver esto
       allowNull: true,
     },
-    score: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-      defaultValue: 0,
-    },
+    // score: {
+    //   type: DataTypes.FLOAT,
+    //   allowNull: true,
+    //   defaultValue: 0,
+    // },
     country: {
       type: DataTypes.STRING,
     },
@@ -65,10 +65,19 @@ module.exports = (sequelize) => {
     code: {
       type: DataTypes.STRING, //para confirmar email
     },
-    aprobado:{
-      type:DataTypes.BOOLEAN,
-      defaultValue:false,
-      allowNull:true
-    }
+    aprobado: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: true,
+    },
+    resume: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: true,
+    },
   });
 };

@@ -57,21 +57,14 @@ const createOrden= async(req,res,next)=>{
     res.send(ordenes)
 }
 const editOrden= async(req,res,next)=>{
-    var carrito=req.body.carrito
-    var ordenes=[]
-    for(let i in carrito){
-        let { id,status} = carrito[i];
-        try {
-            let orden=await Orders.findByPk(id)
-            if(!orden) ordenes.push({message:"no se encontro esa orden"})
-            orden.status=status
-            await orden.save()
-            ordenes.push(orden)
-        } catch (err) {
-            res.status(500).json({message:"error no se pudo editar orden", error:err.message})
-        };
+    let id=req.body.id
+    let change=req.body
+    try{
+        var orden=await Orders.update(change,{where:{id}})
+        res.json(orden)//devuelve 1 si funciona nose por que xD
+    }catch(e){
+        res.status(500).json({message:"no se pudo editar la orden",error:e.message})
     }
-    res.send(ordenes)
    
 }
 const cancelOrden= async(req,res,next)=>{

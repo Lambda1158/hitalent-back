@@ -9,7 +9,7 @@ const {
 const router = Router();
 
 router.post("/", question);
-router.put("/:idQuestion", answer);
+router.put("/answer", answer);
 router.delete("/:idQuestion", deleteQuestion);
 router.get("/all/:idUser", getAllQuestions);
 router.get("/:idPost", getPostQuestions);

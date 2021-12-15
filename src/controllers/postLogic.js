@@ -19,49 +19,60 @@ const getPosts = async (req, res, next) => {
   res.json(post);
 };
 
-const createPost= async(req, res, next) => {
-    let { title, description, duration, cost, username, rating, timeZone, language, category } = req.body;
-    let file = req.file;
-    let path = "https://hitalent-project.herokuapp.com/" + file.filename;
+const createPost = async (req, res, next) => {
+  let {
+    title,
+    description,
+    duration,
+    cost,
+    username,
+    rating,
+    timeZone,
+    language,
+    category,
+  } = req.body;
+  let file = req.file;
+  let path = "http://localhost:3001/" + file.filename;
 
-    try{
-        var categoryDB= await Categories.findOne({
-            where:{ 
-                title: category
-            }
-        })
-        if(!categoryDB) return res.status(500).json({message:"categoria invalida"})
-        var post= await Posts.create({
-            title,
-            description,
-            category,
-            timeZone,
-            language,
-            rating,
-            duration:Number(duration),
-            cost:Number(cost),
-            image:[path],
-        })
-        var user= await Users.findOne({
-            where:{
-                username
-            }
-        })
-        let status=await user.aprobado
-        if (!status)return res.json({message:"usuario no aprobado"})
-        await post.setCategory(categoryDB)
-        await post.setUser(user)
+  try {
+    var categoryDB = await Categories.findOne({
+      where: {
+        title: category,
+      },
+    });
+    if (!categoryDB)
+      return res.status(500).json({ message: "categoria invalida" });
+    var post = await Posts.create({
+      title,
+      description,
+      category,
+      timeZone,
+      language,
+      rating,
+      duration: Number(duration),
+      cost: Number(cost),
+      image: [path],
+    });
+    var user = await Users.findOne({
+      where: {
+        username,
+      },
+    });
+    let status = await user.aprobado;
+    if (!status) return res.json({ message: "usuario no aprobado" });
+    await post.setCategory(categoryDB);
+    await post.setUser(user);
 
-        if(!user) return res.status(500).json({message:"usuario invalido"})
-        post.setCategory(categoryDB)
-        post.setUser(user)
-        res.json(post)
-    } catch(e){
-        res.status(500).json({
-            message:"algo salio mal",
-            error:e.message
-        })
-    }
+    if (!user) return res.status(500).json({ message: "usuario invalido" });
+    post.setCategory(categoryDB);
+    post.setUser(user);
+    res.json(post);
+  } catch (e) {
+    res.status(500).json({
+      message: "algo salio mal",
+      error: e.message,
+    });
+  }
 };
 
 const updatePost = async (req, res, next) => {
@@ -108,7 +119,7 @@ const deletePost = async (req, res, next) => {
 const addImage = async (req, res, next) => {
   let { id } = req.body;
   let file = req.file;
-  let path = "https://hitalent-project.herokuapp.com/" + file.filename;
+  let path = "http://localhost:3001/" + file.filename;
   var post = await Posts.findByPk(id);
   if (!post)
     res.status(500).json({
@@ -141,7 +152,6 @@ const deleteImage = async (req, res, next) => {
   }
 };
 
-
 async function getPostId(req, res, next) {
   let { id } = req.params;
 
@@ -167,7 +177,7 @@ async function getPostId(req, res, next) {
         include: [
           {
             model: Users,
-            attributes: ["id", "username", "score", "country", "image"],
+            attributes: ["id", "username", "country", "image"],
             order: [["createdAt", "DESC"]],
           },
           {
@@ -196,82 +206,81 @@ async function getPostId(req, res, next) {
     }
   }
 }
-const getTalentsByTitle=async(req, res, next) => {
+const getTalentsByTitle = async (req, res, next) => {
   try {
-    
-    let title= req.params.title;
-    var post= await Posts.findAll({
+    let title = req.params.title;
+    var post = await Posts.findAll({
       include: [
         {
           model: Users,
-          attributes: ["username"]
+          attributes: ["username"],
         },
         {
           model: Categories,
-          attributes: ["title"]
-        }
-      ]})
-    let array= post.filter(e => e.title.toLowerCase().includes(title.toLowerCase()))
+          attributes: ["title"],
+        },
+      ],
+    });
+    let array = post.filter((e) =>
+      e.title.toLowerCase().includes(title.toLowerCase())
+    );
     // if(array.length < 1) return res.status(400).json({message:"no se encontro talento con ese titulo"})
-    res.json(array)
+    res.json(array);
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
-
-
-const getTalentosporRating=async(req,res,next)=>{
-    let modo=req.params.modo
-    if (modo==="asc"){
-        var post=await Posts.findAll({
-          include: [
-            {
-              model: Users,
-              attributes: ["username"]
-            },
-            {
-              model: Categories,
-              attributes: ["title"]
-            }
-          ]
-        })
-        post.sort(function(a, b) {
-            if(a.rating>b.rating)return 1
-            if(b.rating>a.rating)return -1
-            return 0
-        });
-        res.json(post)
-    }
-    var post=await Posts.findAll({
+const getTalentosporRating = async (req, res, next) => {
+  let modo = req.params.modo;
+  if (modo === "asc") {
+    var post = await Posts.findAll({
       include: [
         {
           model: Users,
-          attributes: ["username"]
+          attributes: ["username"],
         },
         {
           model: Categories,
-          attributes: ["title"]
-        }
-      ]
-    })
-        post.sort(function(a, b) {
-            if(a.rating>b.rating)return -1
-            if(b.rating>a.rating)return 1
-            return 0
-        });
-        res.json(post)
-}
+          attributes: ["title"],
+        },
+      ],
+    });
+    post.sort(function (a, b) {
+      if (a.rating > b.rating) return 1;
+      if (b.rating > a.rating) return -1;
+      return 0;
+    });
+    res.json(post);
+  }
+  var post = await Posts.findAll({
+    include: [
+      {
+        model: Users,
+        attributes: ["username"],
+      },
+      {
+        model: Categories,
+        attributes: ["title"],
+      },
+    ],
+  });
+  post.sort(function (a, b) {
+    if (a.rating > b.rating) return -1;
+    if (b.rating > a.rating) return 1;
+    return 0;
+  });
+  res.json(post);
+};
 
-
-module.exports={
-    getPosts,
-    createPost,
-    updatePost,
-    deletePost,
-    addImage,
-    deleteImage,
-    getTalentsByTitle,
-    getPostId,
-    getTalentosporRating
+module.exports = {
+  getPosts,
+  createPost,
+  updatePost,
+  deletePost,
+  addImage,
+  deleteImage,
+  getTalentsByTitle,
+  getPostId,
+  getTalentosporRating,
 };

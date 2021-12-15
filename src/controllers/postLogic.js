@@ -22,7 +22,7 @@ const getPosts = async (req, res, next) => {
 const createPost= async(req, res, next) => {
     let { title, description, duration, cost, username, rating, timeZone, language, category } = req.body;
     let file = req.file;
-    let path = "http://localhost:3001/" + file.filename;
+    let path = "https://hitalent-project.herokuapp.com/" + file.filename;
 
     try{
         var categoryDB= await Categories.findOne({
@@ -108,7 +108,7 @@ const deletePost = async (req, res, next) => {
 const addImage = async (req, res, next) => {
   let { id } = req.body;
   let file = req.file;
-  let path = "http://localhost:3001/" + file.filename;
+  let path = "https://hitalent-project.herokuapp.com/" + file.filename;
   var post = await Posts.findByPk(id);
   if (!post)
     res.status(500).json({

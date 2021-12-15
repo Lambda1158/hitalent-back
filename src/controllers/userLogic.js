@@ -70,7 +70,7 @@ async function createUser(req, res, next) {
     const template = getTemplate(name, token);
 
     //-----ENVIAR EL EMAIL------
-    await sendEmail(email, "Este es un email de prueba", template);
+    await sendEmail(email, "¡Te damos la bienvenida!", template);
     await newUser.save();
 
     res.json({
@@ -228,7 +228,7 @@ async function emailResetPassword(req, res, next) {
     const template = getTemplatePassword();
 
     //-----ENVIAR EL EMAIL------
-    await sendEmailPassword(email, "Recuperar", template);
+    await sendEmailPassword(email, "Recuperación de contraseña", template);
 
     res.json({
       success: true,

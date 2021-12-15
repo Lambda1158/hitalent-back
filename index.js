@@ -1,5 +1,21 @@
-const server = require("./src/app.js");
-const PORT=process.env.PORT||3001
+const app = require("./src/app.js");
+// const http = require("http");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+
+// const server = http.createServer(app);
+// const io = socketio.listen(server);
+
+// let io = require("socket.io").listen(server.listener);
+require("./sockets")(io);
+
 const {
   conn,
   Users,
@@ -14,10 +30,11 @@ const {
   Conversation,
 } = require("./src/db.js");
 const bcrypt = require("bcrypt");
+const { getMaxListeners } = require("./src/app.js");
 
 // Syncing all the models at once.
 conn.sync({ force: true }).then(() => {
-  server.listen(PORT, async () => {
+  httpServer.listen(app.get("PORT"), async () => {
     Categories.bulkCreate([
       { title: "Programación y Tecnologias" },
       { title: "Arte" },
@@ -39,20 +56,21 @@ conn.sync({ force: true }).then(() => {
       .then((e) => {})
       .catch((e) => console.log(e));
 
-      var password = "123abc";
-      var passwordHash = await bcrypt.hash(password, 10);
+    var password = "123abc";
+    var passwordHash = await bcrypt.hash(password, 10);
     //------------------------------------------------------------------------------------
-    async function calcularRating(post,review){
-      if(post.rating===0){
-        post.rating=Number(review.qualification)
-        await post.save()
-        return post
+    async function calcularRating(post, review) {
+      if (post.rating === 0) {
+        post.rating = Number(review.qualification);
+        await post.save();
+        return post;
       }
-      post.rating=Number(Math.round((post.rating+Number(review.qualification))/2))
-      await post.save()
+      post.rating = Number(
+        Math.round((post.rating + Number(review.qualification)) / 2)
+      );
+      await post.save();
     }
     //------------------------------------USUARIOS------------------------------------------
-
     var usuarioPrueba = await Users.create({
       name: "Admin",
       lastName: "Hitalent",
@@ -72,8 +90,8 @@ conn.sync({ force: true }).then(() => {
       birthdate: "1994-10-10",
       email: "brunoherrera@gmail.com",
       country: "Rusia",
-      aprobado:false,
-      email_verified:true
+      aprobado: false,
+      email_verified: true,
     });
     var usuarioPrueba2 = await Users.create({
       name: "Martina",
@@ -83,8 +101,8 @@ conn.sync({ force: true }).then(() => {
       birthdate: "1994-10-10",
       email: "martinapipi@gmail.com",
       country: "Corea",
-      aprobado:false,
-      email_verified:true
+      aprobado: false,
+      email_verified: true,
     });
     var usuarioPrueba3 = await Users.create({
       name: "Cristian",
@@ -94,8 +112,8 @@ conn.sync({ force: true }).then(() => {
       birthdate: "1994-10-10",
       email: "facilito@gmail.com",
       country: "NewYorkCity",
-      aprobado:true,
-      email_verified:true
+      aprobado: true,
+      email_verified: true,
     });
     var usuarioPrueba4 = await Users.create({
       name: "Sebastian",
@@ -105,8 +123,8 @@ conn.sync({ force: true }).then(() => {
       birthdate: "1994-10-10",
       email: "sacout@gmail.com",
       country: "NewYorkCity",
-      aprobado:true,
-      email_verified:true
+      aprobado: true,
+      email_verified: true,
     });
     var testuser1 = await Users.create({
       //creo usuario test1
@@ -117,8 +135,10 @@ conn.sync({ force: true }).then(() => {
       birthdate: "2016-06-21",
       email: "franco.benitez@gmail.com",
       country: "Bolivia",
-      aprobado:true,
-      email_verified:true
+      aprobado: true,
+      email_verified: true,
+      resume:
+        "Músico profesional, a cargo de la academia de talentos de buenos aires, tutor y coaching personalizado.",
     });
     var testuser3 = await Users.create({
       //usuario test 3
@@ -129,8 +149,8 @@ conn.sync({ force: true }).then(() => {
       birthdate: "1994-10-10",
       email: "hernan_lopez@gmail.com",
       country: "Uruguay",
-      aprobado:true,
-      email_verified:true
+      aprobado: true,
+      email_verified: true,
     });
     var testUserProfile2 = await Users.create({
       name: "Agustina",
@@ -140,8 +160,10 @@ conn.sync({ force: true }).then(() => {
       birthdate: "2000-10-10",
       email: "agus1gonzalez@gmail.com",
       country: "Brasil",
-      aprobado:true,
-      email_verified:true
+      aprobado: true,
+      email_verified: true,
+      resume:
+        "Técnica agrónoma, Lic. en Comunicaciones. Si te interesa mi curso de Botánica no dudes en comprarlo y comenzar con tu propia huerta en casa",
     });
     var testUserProfile = await Users.create({
       //usuario test 3
@@ -152,8 +174,10 @@ conn.sync({ force: true }).then(() => {
       birthdate: "2000-10-10",
       email: "santi_alvarez@gmail.com",
       country: "Argentina",
-      aprobado:true,
-      email_verified:true
+      aprobado: true,
+      email_verified: true,
+      resume:
+        "Fullstack developer egresado de Henry, apasionado de la innnovación tecnológica. También incursiono en técnicas de relajación y autocontrol...ya viste mi nuevo curso de Yoga?.",
     });
     var userToDelete = await Users.create({
       //test delete
@@ -164,8 +188,8 @@ conn.sync({ force: true }).then(() => {
       password: passwordHash,
       email: "mica-garcia@gmail.com",
       country: "Chile",
-      aprobado:true,
-      email_verified:true
+      aprobado: true,
+      email_verified: true,
     });
     var testUserProfile3 = await Users.create({
       name: "Ricardo",
@@ -175,11 +199,11 @@ conn.sync({ force: true }).then(() => {
       birthdate: "2000-10-10",
       email: "ricky123@gmail.com",
       country: "Argentina",
-      aprobado:true,
-      email_verified:true
+      aprobado: true,
+      email_verified: true,
+      resume:
+        "Profesional de la construcción, egresado de la UDC (universidad del constructor), cuento con más de 10 años de experiencia comprobable en el rubro.",
     });
-
-
 
     //------------------------------------PUBLICACIONES-------------------------------------------------------------------------
 
@@ -193,9 +217,9 @@ conn.sync({ force: true }).then(() => {
         "https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/styles/1200/public/media/image/2020/05/cantar-1955117.jpg?itok=fCPDYcVi",
       ],
       timeZone: " GMT-3",
-      language: " español"
+      language: " español",
     });
-    await testpost1.setCategory(7)//Le agrego musica y audio de categoria al post canto testpost1
+    await testpost1.setCategory(7); //Le agrego musica y audio de categoria al post canto testpost1
     await testpost1.setUser(testuser1); //Clase de canto testpost1
 
     var testpost2 = await Posts.create({
@@ -208,23 +232,24 @@ conn.sync({ force: true }).then(() => {
         "https://www.superprof.com.ar/blog/wp-content/uploads/2020/03/aprender-guitarra-principiante-1060x704.jpg",
       ],
       timeZone: " GMT-6",
-      language: " español"
+      language: " español",
     });
-    await testpost1.setCategory(7)//Le agrego musica y audio de categoria al post Guitarra testpost2
-    await testpost2.setUser(testuser1);//Franco Bennitez crea el post clase de canto
+    await testpost1.setCategory(7); //Le agrego musica y audio de categoria al post Guitarra testpost2
+    await testpost2.setUser(testuser1); //Franco Bennitez crea el post clase de canto
 
     var testPostProfile3 = await Posts.create({
       title: "Clases de Cultivos",
-      description: "Les explicaré como hacer un correcto cultivo de vegetales y asi podras obtener las mejores frutas y verduras en tu propia casa",
+      description:
+        "Les explicaré como hacer un correcto cultivo de vegetales y asi podras obtener las mejores frutas y verduras en tu propia casa",
       cost: 230,
       image: [
         "https://cdn.euroinnova.edu.es/img/subidasEditor/fotolia_104339124_subscription_xxl-1611919696.webp",
       ],
       timeZone: " GMT-3",
-      language: " español"
+      language: " español",
     });
-    await testPostProfile3.setCategory(3)//le agrego la categoria Botanica a el post clases de cultivos
-    await testPostProfile3.setUser(testUserProfile2);//Agustina Gonzales crea un post de clases de cultivos testUserProfile2
+    await testPostProfile3.setCategory(3); //le agrego la categoria Botanica a el post clases de cultivos
+    await testPostProfile3.setUser(testUserProfile2); //Agustina Gonzales crea un post de clases de cultivos testUserProfile2
 
     var testPostProfile1 = await Posts.create({
       //creo post 1
@@ -236,9 +261,9 @@ conn.sync({ force: true }).then(() => {
         "https://cdn.domestika.org/c_limit,dpr_auto,f_auto,q_auto,w_820/v1566492620/content-items/003/212/919/2-original.png?1566492620",
       ],
       timeZone: " GMT-3",
-      language: " español"
+      language: " español",
     });
-    await testPostProfile1.setCategory(1)//Le agrego la categoria Programacion y tecnologia al post Desarrollo web testpostprifile1
+    await testPostProfile1.setCategory(1); //Le agrego la categoria Programacion y tecnologia al post Desarrollo web testpostprifile1
     await testPostProfile1.setUser(testUserProfile); //El usuario Santiago alvarez crea el post desarrolo web
 
     var testPostProfile2 = await Posts.create({
@@ -251,10 +276,10 @@ conn.sync({ force: true }).then(() => {
         "https://images-ext-1.discordapp.net/external/HI1Ac92dYdKO1WGZO18Up6geo4F9VG1apGPU1f7TfMg/https/t1.pb.ltmcdn.com/es/posts/5/4/1/pasos_para_aprender_a_meditar_en_casa_4145_orig.jpg?width=730&height=438",
       ],
       timeZone: " GMT-5",
-      language: " español"
+      language: " español",
     });
-    await testPostProfile2.setCategory(16)//Le agrego  la categoria Meditación a el post yoga testpostprofile2
-    await testPostProfile2.setUser(testUserProfile);// El usuario Santiago alvarez crea el post Yoga
+    await testPostProfile2.setCategory(16); //Le agrego  la categoria Meditación a el post yoga testpostprofile2
+    await testPostProfile2.setUser(testUserProfile); // El usuario Santiago alvarez crea el post Yoga
 
     var testPostProfile4 = await Posts.create({
       title: "Plomeria",
@@ -265,11 +290,10 @@ conn.sync({ force: true }).then(() => {
         "https://casapropiacolombia.com/sites/default/files/2019-12/11_0.jpg",
       ],
       timeZone: " GMT-6",
-      language: " español"
+      language: " español",
     });
-    await testPostProfile4.setCategory(15)//Le asigno la categoria de mantenimiento del hogar al post testpostprofile4
-    await testPostProfile4.setUser(testUserProfile3);//Post plomeria creado por Ricardo Cortez
-
+    await testPostProfile4.setCategory(15); //Le asigno la categoria de mantenimiento del hogar al post testpostprofile4
+    await testPostProfile4.setUser(testUserProfile3); //Post plomeria creado por Ricardo Cortez
 
     //-------------------------------------------------------FAVORITOS------------------------------------------------------------------------
     var testfavoritos1 = await Favorites.create({
@@ -284,51 +308,47 @@ conn.sync({ force: true }).then(() => {
     }); //lista  favoritos 2
     await testfavoritos2.setUser(testuser3);
     await testfavoritos2.setPost(testpost2); //les bindeo un usuario y un post a cada lista favorito
-    
 
-
-    
-    
     //-----------------------------------------------  REVIEWS-------------------------------------------------------------------------------
     var testReviewProfile1 = await Review.create({
       qualification: 4,
       description: "Muy bueno",
     });
     await testReviewProfile1.setUser(testuser3); //Hernan lopez crea una review testReviewprofile1
-    await testReviewProfile1.setPost(testPostProfile1);//La crea sobre el post Desarrolo web
-    calcularRating(testPostProfile1,testReviewProfile1)
+    await testReviewProfile1.setPost(testPostProfile1); //La crea sobre el post Desarrolo web
+    calcularRating(testPostProfile1, testReviewProfile1);
 
-    var reviewSebaporYoga=await Review.create({
-      qualification:1,
-      description:"no estaba op"
-    })
-    await reviewSebaporYoga.setUser(usuarioPrueba4)//Sebastian Cepeda crea una review usuarioPrueba4
-    await reviewSebaporYoga.setPost(testPostProfile2)//La crea sobre el post Yoga testPostProfile2
-    calcularRating(testPostProfile2,reviewSebaporYoga)
+    var reviewSebaporYoga = await Review.create({
+      qualification: 1,
+      description: "no estaba op",
+    });
+    await reviewSebaporYoga.setUser(usuarioPrueba4); //Sebastian Cepeda crea una review usuarioPrueba4
+    await reviewSebaporYoga.setPost(testPostProfile2); //La crea sobre el post Yoga testPostProfile2
+    calcularRating(testPostProfile2, reviewSebaporYoga);
 
-    var reviewCristianporYoga=await Review.create({
-      qualification:5,
-      description:"Me encanto la clase C:"
-    })
-    await reviewCristianporYoga.setUser(usuarioPrueba3)//Cristian Alvornoz crea una review usuarioPrueba3
-    await reviewCristianporYoga.setPost(testPostProfile2)//La crea sobre el post Yoga testPostProfile2
-    calcularRating(testPostProfile2,reviewCristianporYoga)
+    var reviewCristianporYoga = await Review.create({
+      qualification: 5,
+      description: "Me encanto la clase C:",
+    });
+    await reviewCristianporYoga.setUser(usuarioPrueba3); //Cristian Alvornoz crea una review usuarioPrueba3
+    await reviewCristianporYoga.setPost(testPostProfile2); //La crea sobre el post Yoga testPostProfile2
+    calcularRating(testPostProfile2, reviewCristianporYoga);
 
     var testReviewProfile2 = await Review.create({
       qualification: 1,
       description: "No me gusto la explicacion",
     });
-    await testReviewProfile2.setUser(testuser1);//Franco Benitez deja una review testuser1
-    await testReviewProfile2.setPost(testPostProfile2);//La crea sobre post yoga
-    calcularRating(testPostProfile2,testReviewProfile2)
+    await testReviewProfile2.setUser(testuser1); //Franco Benitez deja una review testuser1
+    await testReviewProfile2.setPost(testPostProfile2); //La crea sobre post yoga
+    calcularRating(testPostProfile2, testReviewProfile2);
 
     var testReviewProfile3 = await Review.create({
       qualification: 5,
       description: "Gracias a este curso pude crear mi propia huerta",
     });
-    await testReviewProfile3.setUser(usuarioPrueba4);//Sebastian Cepeda hace una review sobre el post q compro
-    await testReviewProfile3.setPost(testPostProfile3);//EL post sobre el q se hizo la review Clases de cultivos
-    calcularRating(testPostProfile3,testReviewProfile3)
+    await testReviewProfile3.setUser(usuarioPrueba4); //Sebastian Cepeda hace una review sobre el post q compro
+    await testReviewProfile3.setPost(testPostProfile3); //EL post sobre el q se hizo la review Clases de cultivos
+    calcularRating(testPostProfile3, testReviewProfile3);
 
     //----------------------------------------------- QUESTIONS---------------------------------------------------------------------
     var testQuestionProfile = await Question.create({
@@ -336,8 +356,8 @@ conn.sync({ force: true }).then(() => {
       title: "Titulo de la pregunta",
       question: "Recibis mercado pago??",
     });
-    await testQuestionProfile.setUser(testuser1);//Franco Benitez crea un apregunta testuser1
-    await testQuestionProfile.setPost(testPostProfile2);// La crea sobre el post yoga
+    await testQuestionProfile.setUser(testuser1); //Franco Benitez crea un apregunta testuser1
+    await testQuestionProfile.setPost(testPostProfile2); // La crea sobre el post yoga
 
     testQuestionProfile.answer = "Si, recibo mercado pago";
     testQuestionProfile.save();
@@ -350,7 +370,6 @@ conn.sync({ force: true }).then(() => {
     await testQuestionProfile2.setUser(testUserProfile2);
     await testQuestionProfile2.setPost(testPostProfile2);
 
-
     var testQuestionProfile1 = await Question.create({
       title: "Tipo de vegetales",
       question:
@@ -359,43 +378,45 @@ conn.sync({ force: true }).then(() => {
     await testQuestionProfile1.setUser(testuser1);
     await testQuestionProfile1.setPost(testPostProfile3);
 
-    testQuestionProfile1.answer ="Hola Franco, si, mi curso contempla esa explicación";
+    testQuestionProfile1.answer =
+      "Hola Franco, si, mi curso contempla esa explicación";
     testQuestionProfile1.save();
     //----------------------------------------------- ORDENES------------------------------------------------------------------------
-      var ordenSebaCultivos=await Orders.create({
-        title:"Orden de Sebastian sobre cultivos",
-        price:500
-      })
-      await ordenSebaCultivos.setUser(usuarioPrueba4) //Orden de compra de sebastian 
-      await ordenSebaCultivos.setPost(testPostProfile3)// Sobre post de cultivos
+    var ordenSebaCultivos = await Orders.create({
+      title: "Orden de Sebastian sobre cultivos",
+      price: 500,
+    });
+    await ordenSebaCultivos.setUser(usuarioPrueba4); //Orden de compra de sebastian
+    await ordenSebaCultivos.setPost(testPostProfile3); // Sobre post de cultivos
 
-      var ordenHernanGuitarra = await Orders.create({
-        title:"orden de compra de  Hernan a clase de guitarra",
-        price:790
-      }); // creo una orden vacia
-      await ordenHernanGuitarra.setUser(testuser3); //Orden a nombre de Hernan Lopez q es testuser3
-      await ordenHernanGuitarra.setPost(testpost2); // Compro clases de Guitarra testpost2
+    var ordenHernanGuitarra = await Orders.create({
+      title: "orden de compra de  Hernan a clase de guitarra",
+      price: 790,
+    }); // creo una orden vacia
+    await ordenHernanGuitarra.setUser(testuser3); //Orden a nombre de Hernan Lopez q es testuser3
+    await ordenHernanGuitarra.setPost(testpost2); // Compro clases de Guitarra testpost2
 
-      var ordenFrancoYoga=await Orders.create({
-        title:"orden de compra de Franco a la clase Yoga",
-        price:200
-      })
-      await ordenFrancoYoga.setUser(testuser1)//Orden de compra para Franco q es testuser1
-      await ordenFrancoYoga.setPost(testPostProfile2)//Compro clases de Yoga testpostprofile2
+    var ordenFrancoYoga = await Orders.create({
+      title: "orden de compra de Franco a la clase Yoga",
+      price: 200,
+    });
+    await ordenFrancoYoga.setUser(testuser1); //Orden de compra para Franco q es testuser1
+    await ordenFrancoYoga.setPost(testPostProfile2); //Compro clases de Yoga testpostprofile2
 
-      var ordenSebastianYoga=await Orders.create({
-        title:"Orden de compra de Sebastian a la clase de Yoga",
-        price:123
-      })
-      await ordenSebastianYoga.setUser(usuarioPrueba4)//Orden de compra para Sebastian q es usuarioPrueba4
-      await ordenSebastianYoga.setPost(testPostProfile2)//Compro clases de yoga testPostProfile2
+    var ordenSebastianYoga = await Orders.create({
+      title: "Orden de compra de Sebastian a la clase de Yoga",
+      price: 123,
+    });
+    await ordenSebastianYoga.setUser(usuarioPrueba4); //Orden de compra para Sebastian q es usuarioPrueba4
+    await ordenSebastianYoga.setPost(testPostProfile2); //Compro clases de yoga testPostProfile2
 
-      var ordenSebastianYoga=await Orders.create({
-        title:"Orden de compra de Cristian alias el gran FACILITO a la clase de Yoga",
-        price:666
-      })
-      await ordenSebastianYoga.setUser(usuarioPrueba3)//Orden de compra para el FACILITO q es usuarioPrueba3
-      await ordenSebastianYoga.setPost(testPostProfile2)//Compro clases de yoga testPostProfile2
+    var ordenSebastianYoga = await Orders.create({
+      title:
+        "Orden de compra de Cristian alias el gran FACILITO a la clase de Yoga",
+      price: 666,
+    });
+    await ordenSebastianYoga.setUser(usuarioPrueba3); //Orden de compra para el FACILITO q es usuarioPrueba3
+    await ordenSebastianYoga.setPost(testPostProfile2); //Compro clases de yoga testPostProfile2
 
     //PROBANDO CHAT-----------------------
     let conversation1 = await Conversation.create({
@@ -413,6 +434,6 @@ conn.sync({ force: true }).then(() => {
       text: "Hola Santi",
     });
 
-    console.log("%s listening at 3001 ahi va!!!!"); // eslint-disable-line no-console
+    console.log("%s listening at ahi va!!!!", app.get("PORT")); // eslint-disable-line no-console
   });
 });

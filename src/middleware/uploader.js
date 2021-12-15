@@ -6,11 +6,11 @@ const filename =(req,file,next)=>{
     next(null,`img-${Date.now()}${ext}`)
 }
 
-try {
-    fs.mkdirSync(path.join(__dirname, '/../uploads'))
-  } catch (err) {
-    if (err.code !== 'EEXIST') throw err
-  }
+// try {
+//     fs.mkdirSync(path.join(__dirname, '/../uploads'))
+//   } catch (err) {
+//     if (err.code !== 'EEXIST') throw err
+//   }
 
 const destination =(req,res,next)=>{
     next(null,`${__dirname}/../uploads`)

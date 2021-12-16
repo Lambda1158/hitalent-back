@@ -3,6 +3,7 @@ const router = Router();
 const mercadopago = require("mercadopago");
 // const nodemailer = require("nodemailer");
 // const { templateSuccess, templateFailure, templatePending } = require('../utils/Templates/emailTemplates');
+const PROXY  = "https://hitalent-project.herokuapp.com"
 
 mercadopago.configure({
   access_token:
@@ -31,9 +32,9 @@ router.post("/mercadopago", async (req, res) => {
     items: itemsCart,
 
     back_urls: {
-      success: "http://localhost:3000/checkoutApro",
-      failure: "http://localhost:3000/home",
-      pending: "http://localhost:3000/home",
+      success: `${PROXY}/checkoutApro`,
+      failure: `${PROXY}/home`,
+      pending: `${PROXY}/home`,
     },
   };
 

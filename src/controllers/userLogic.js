@@ -205,12 +205,18 @@ async function getLogIn(req, res, next) {
 
 const editUser = async (req, res, next) => {
   let file = req.file;
-  let { username } = req.body;
+  let {country,username,description } = req.body;
+  
   try {
     var user = await Users.findOne({ where: { username } });
-    let path = "https://hitalent-project.herokuapp.com/" + file.filename;
-    user.image = path;
-    await user.save();
+    if(file){
+      let path = "https://hitalent-project.herokuapp.com/" + file.filename;
+      user.image = path;
+    }
+    if(country) user.country=country
+    if(description) user.resume=description
+    if(language)user.language=language
+    await user.save()
     res.send(user.toJSON());
   } catch (e) {
     console.log(e);

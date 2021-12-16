@@ -215,7 +215,6 @@ const editUser = async (req, res, next) => {
     }
     if(country) user.country=country
     if(description) user.resume=description
-    if(language)user.language=language
     await user.save()
     res.send(user.toJSON());
   } catch (e) {

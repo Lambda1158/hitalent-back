@@ -33,7 +33,7 @@ const bcrypt = require("bcrypt");
 const { getMaxListeners } = require("./src/app.js");
 
 // Syncing all the models at once.
-conn.sync({ force: true }).then(() => {
+conn.sync({ force: false }).then(() => {
   httpServer.listen(app.get("PORT"), async () => {
     Categories.bulkCreate([
       { title: "Programación y Tecnologias" },
